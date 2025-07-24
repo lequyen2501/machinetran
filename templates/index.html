@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dịch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- <h1>Spanish to English Translator</h1> -->
+       <div class="lay-out">
+           <div class="block-">
+            <span>Tiếng Việt</span> 
+            <div class="block-in">
+                    
+               <textarea id="input" placeholder=""></textarea>
+               
+            </div>
+           </div>
+           <div class="block-"> 
+            <span>Tiếng Anh</span>
+           <div class="block-out" id="output">
+           
+           </div>
+        </div>
+       </div>
+       <button onclick="translateText()">Dịch</button>
+    </div>
+
+   <script>
+  // Hàm gửi văn bản cần dịch lên Flask server
+  function translateText() {
+    const inputText = document.getElementById("input").value.trim();
+    const output = document.getElementById("output");
+
+    if (!inputText) {
+      output.innerText = "Vui lòng nhập nội dung để dịch.";
+      return;
+    }
+
+    // Gửi POST request đến Flask backend
+    fetch('/translate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ text: inputText })
+    })
+    .then(response => response.json())
+    .then(data => {
+      output.innerText = data.translation;
+    })
+    .catch(error => {
+      console.error("Lỗi:", error);
+      output.innerText = "Đã xảy ra lỗi khi dịch.";
+    });
+  }
+
+  // Xóa kết quả cũ khi người dùng gõ lại
+  document.getElementById("input").addEventListener("input", function () {
+    document.getElementById("output").innerText = "";
+  });
+</script>
